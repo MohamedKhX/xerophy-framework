@@ -88,7 +88,7 @@ class Router
 
         foreach ($routes as $route) {
             if($uri === $route['uri']) {
-                return $route->run();
+                return $route['instance']->run();
             }
         }
 
@@ -114,7 +114,7 @@ class Router
             router: $this
         );
 
-        $this->routes[$method->value] = [
+        $this->routes[$method->value][] = [
             'uri' => $uri,
             'name' => null,
             'instance' => $routeInstance
