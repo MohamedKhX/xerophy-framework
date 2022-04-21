@@ -1,0 +1,17 @@
+{
+    "name": "xerophy/framework",
+    "description": "the xerophy framework",
+    "keywords": ["fremework", "xerophy"],
+    "autoload": {
+        "psr-4": {
+            "Xerophy\\Framework\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MohamedKhX",
+            "email": "muhamedkhx2@gmail.com"
+        }
+    ],
+    "require": {}
+}
