@@ -3,7 +3,6 @@
 namespace Xerophy\Framework\Routing;
 
 use Exception;
-use newrelic\DistributedTracePayload;
 
 class Route
 {
