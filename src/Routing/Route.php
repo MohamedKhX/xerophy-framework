@@ -12,10 +12,15 @@ class Route
     protected string $uri;
 
     /**
+     * The route name
+     * */
+    protected ?string $name;
+
+    /**
      * The route permeates
      * */
 
-    protected array $params = ['test', 4];
+    protected array $params = [];
 
     /**
      * The HTTP methods the route referred to.
@@ -154,17 +159,33 @@ class Route
         return $this->method;
     }
 
-    public function getRouteName()
+    /**
+     * return the route name
+     *
+     * @return string
+     * */
+    public function getRouteName(): string
     {
-        //Todo Return the route name
+        return $this->name;
     }
 
-    public function name()
+    /**
+     * Add name for the route
+     *
+     * @return static;
+     * */
+    public function name(string $name): static
     {
-        //Todo add name to the route
+        $this->name = $name;
+        return $this;
     }
 
-    //todo write phpDoc
+    /**
+     * sleep for some time and after that load the route action
+     *
+     * @param int $seconds
+     * @return static
+     */
     public function sleep(int $seconds): static
     {
         sleep($seconds);
