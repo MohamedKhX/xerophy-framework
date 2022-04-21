@@ -14,7 +14,7 @@ class Route
     /**
      * The route name
      * */
-    protected ?string $name;
+    protected ?string $name = null;
 
     /**
      * The route permeates
@@ -52,11 +52,11 @@ class Route
      * @param string $uri
      * @param RouteMethod $method
      * @param callable|array $action
-     * @param $router
+     * @param Router $router
      *
      * @return void
      */
-    public function __construct(string $uri, RouteMethod $method, callable|array $action, $router)
+    public function __construct(string $uri, RouteMethod $method, callable|array $action, Router $router)
     {
         $this->uri = $uri;
         $this->method = $method;
@@ -64,14 +64,13 @@ class Route
         $this->router = $router;
     }
 
-
     /**
      * Parse the route action to controller and callback
      *
      * @return mixed
      * @throws Exception
      */
-    public function parseAction() : mixed
+    protected function parseAction() : mixed
     {
         if(is_callable($this->action))
             return $this->action;
@@ -91,19 +90,20 @@ class Route
      * Run the route action
      *
      * @throws Exception
-     * @return void
+     * @return static
      */
 
-    public function run() : void
+    public function run() : static
     {
         $this->parseAction();
 
         if($this->isController()) {
             $this->runFromController();
-            return;
+            return $this;
         }
 
         $this->runCallback();
+        return $this;
     }
 
     /**
@@ -162,9 +162,9 @@ class Route
     /**
      * return the route name
      *
-     * @return string
+     * @return ?string
      * */
-    public function getRouteName(): string
+    public function getRouteName(): ?string
     {
         return $this->name;
     }
