@@ -21,14 +21,14 @@ class Request
         return $_POST ?? null;
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
-        
+        return explode('?', $_SERVER['REQUEST_URI'])[0];
     }
 
     public function getUrlWithQuery()
     {
-        
+        return $_SERVER['REQUEST_URI'];
     }
 
     public function getFullUrlWithQuery()
