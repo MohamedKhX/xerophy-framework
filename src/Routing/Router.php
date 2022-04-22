@@ -2,12 +2,14 @@
 
 namespace Xerophy\Framework\Routing;
 
+use Xerophy\Framework\Http\Request;
+
 class Router
 {
     /*
      * The route collection instance.
      * */
-    protected array $routes = [];
+    public array $routes = [];
 
     /*
      * The currently dispatched route instance.
@@ -17,8 +19,44 @@ class Router
     /*
      * The request currently being dispatched.
      * */
-    protected $currentRequest;
+    protected Request $currentRequest;
 
+
+    /**
+     * Create an instance
+     *
+     * @retrun void
+     * */
+    public function __construct(Request $request)
+    {
+        $this->currentRequest = $request;
+        $this->routes = $this->fillRoutes();
+    }
+
+    /**
+     * Fill the routes collection
+     *
+     * @return array
+     * */
+    public function fillRoutes(): array
+    {
+        return [
+            RouteMethod::GET->value => [],
+            RouteMethod::POST->value => [],
+            RouteMethod::PUT->value => [],
+            RouteMethod::DELETE->value => [],
+        ];
+    }
+
+    /**
+     * get the current Request instance
+     *
+     * @return Request
+     * */
+    public function getRequestInstance(): Request
+    {
+        return $this->currentRequest;
+    }
 
     /**
      * Add a new GET route
@@ -28,9 +66,9 @@ class Router
      *
      * @return Route
      */
-    public function get(string $uri, callable|array $action): Route
+    public function get(string $uri, callable|array $action): ?Route
     {
-       return $this->addRoute($uri, $action, RouteMethod::GET);
+        return $this->addRoute($uri, $action, RouteMethod::GET);
     }
 
     /**
@@ -41,9 +79,9 @@ class Router
      *
      * @return Route
      */
-    public function post(string $uri, callable|array $action): Route
+    public function post(string $uri, callable|array $action): ?Route
     {
-       return $this->addRoute($uri, $action, RouteMethod::POST);
+        return $this->addRoute($uri, $action, RouteMethod::POST);
     }
 
     /**
@@ -54,7 +92,7 @@ class Router
      *
      * @return Route
      */
-    public function put(string $uri, callable|array $action): Route
+    public function put(string $uri, callable|array $action): ?Route
     {
         return $this->addRoute($uri, $action, RouteMethod::PUT);
     }
@@ -67,7 +105,7 @@ class Router
      *
      * @return Route
      */
-    public function delete(string $uri, callable|array $action): Route
+    public function delete(string $uri, callable|array $action): ?Route
     {
         return $this->addRoute($uri, $action, RouteMethod::DELETE);
     }
@@ -100,7 +138,61 @@ class Router
 
         return null;
     }
-    
+
+    /**
+     * Parse thr route
+     * */
+    public function parseRoute(string $uri = '')
+    {
+        /*
+         * The current url is test/mohamedKhx
+         * registerd in the router test/:username
+         * */
+    }
+
+    /**
+     * Run the specific route
+     * */
+    protected function runRoute()
+    {
+
+    }
+
+    /**
+     * Check if the route is not already exists in $this->routes
+     *
+     * @param string $uri
+     * @param RouteMethod $method
+     *
+     * @return bool
+     * */
+    public function isRouteExists(string $uri, RouteMethod $method): bool
+    {
+        foreach ($this->routes[$method->value] as $route) {
+            if($route['uri'] === $uri) {
+                throw new \Exception('The Route is already exists');
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Fix the uri from ['example'] tp ['/example']
+     *
+     * @param string $uri
+     * @return string
+     * */
+    public function parseUri(string $uri): string
+    {
+        if(!str_starts_with($uri, '/')) {
+            $uri = '/' . $uri;
+        }
+
+        return $uri;
+    }
+
     /**
      * Register a new Route
      *
@@ -111,8 +203,12 @@ class Router
      * @return Route
      */
 
-    protected function addRoute(string $uri, callable|array $action, RouteMethod $method): Route
+    protected function addRoute(string $uri, callable|array $action, RouteMethod $method): ?Route
     {
+        $uri = $this->parseUri($uri);
+
+        if($this->isRouteExists($uri, $method)) return null;
+
         $routeInstance = new Route(
             uri: $uri,
             method: $method,
@@ -122,10 +218,11 @@ class Router
 
         $this->routes[$method->value][] = [
             'uri' => $uri,
-            'name' => null,
+            'name' => &$routeInstance->routeName,
             'instance' => $routeInstance
         ];
 
         return $routeInstance;
     }
+
 }
