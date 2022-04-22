@@ -14,7 +14,7 @@ class Route
     /**
      * The route name
      * */
-    protected ?string $name = null;
+    public ?string $routeName = null;
 
     /**
      * The route parameters
@@ -153,7 +153,7 @@ class Route
      * Get the HTTP method the route responds to.
      *
      * @return RouteMethod
-    */
+     */
     public function getRouteMethod(): RouteMethod
     {
         return $this->method;
@@ -166,7 +166,7 @@ class Route
      * */
     public function getRouteName(): ?string
     {
-        return $this->name;
+        return $this->routeName;
     }
 
     /**
@@ -176,8 +176,18 @@ class Route
      * */
     public function name(string $name): static
     {
-        $this->name = $name;
+        $this->routeName = $name;
         return $this;
+    }
+
+    /**
+     * Get the route name
+     *
+     * @return ?string
+     * */
+    public function getName(): ?string
+    {
+        return $this->routeName;
     }
 
     /**
@@ -192,4 +202,15 @@ class Route
         return $this;
     }
 
+
+    public function parseParams()
+    {
+        /*$url = $this->router->getRequestInstance()->getUrl();
+        $explodedURL = explode('/', $url);*/
+    }
+
+    public function params()
+    {
+
+    }
 }
