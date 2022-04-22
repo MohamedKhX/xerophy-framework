@@ -17,7 +17,7 @@ class Route
     protected ?string $name = null;
 
     /**
-     * The route permeates
+     * The route parameters
      * */
 
     protected array $params = [];
