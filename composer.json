@@ -13,5 +13,7 @@
             "email": "muhamedkhx2@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "symfony/http-foundation": "^6.0"
+    }
 }
