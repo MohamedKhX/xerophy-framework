@@ -53,7 +53,7 @@ class Request
     public function getUrl(): string
     {
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
-        return rtrim(preg_replace('/\?.*/', '', $this->$uri()), '/');
+        return rtrim(preg_replace('/\?.*/', '', $uri), '/');
     }
 
     /**
