@@ -80,9 +80,12 @@ class Router
     /**
      * landing to the current uri
      *
+     * @param string $method
+     * @param string $uri
+     *
      * @return ?Route
-     * */
-    public function landing($method, $uri): ?Route
+     */
+    public function landing(string $method, string $uri): ?Route
     {
         $routes = $this->routes[$method];
 
