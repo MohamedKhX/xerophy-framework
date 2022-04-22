@@ -87,7 +87,10 @@ class Router
      */
     public function landing(string $method, string $uri): ?Route
     {
-        $routes = $this->routes[$method ?? '/'];
+        $routes = $this->routes[$method ?? 'GET'];
+
+        if($uri === '')
+            $uri = '/';
 
         foreach ($routes as $route) {
             if($uri === $route['uri']) {
