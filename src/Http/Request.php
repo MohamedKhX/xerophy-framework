@@ -11,9 +11,9 @@ class Request
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    public function fieldContent(string $fieldName): string|array
+    public function fieldContent(string $fieldName): string|array|null
     {
-        return $_POST[$fieldName];
+        return $_POST[$fieldName] ?? null;
     }
 
     public function content(): ?array
