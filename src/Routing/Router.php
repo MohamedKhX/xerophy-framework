@@ -2,6 +2,7 @@
 
 namespace Xerophy\Framework\Routing;
 
+use Exception;
 use Xerophy\Framework\Http\Request;
 
 class Router
@@ -64,7 +65,8 @@ class Router
      * @param string $uri
      * @param callable|array $action
      *
-     * @return Route
+     * @return ?Route
+     * @throws Exception
      */
     public function get(string $uri, callable|array $action): ?Route
     {
@@ -77,7 +79,8 @@ class Router
      * @param string $uri
      * @param callable|array $action
      *
-     * @return Route
+     * @return ?Route
+     * @throws Exception
      */
     public function post(string $uri, callable|array $action): ?Route
     {
@@ -90,7 +93,8 @@ class Router
      * @param string $uri
      * @param callable|array $action
      *
-     * @return Route
+     * @return ?Route
+     * @throws Exception
      */
     public function put(string $uri, callable|array $action): ?Route
     {
@@ -103,17 +107,14 @@ class Router
      * @param string $uri
      * @param callable|array $action
      *
-     * @return Route
+     * @return ?Route
+     * @throws Exception
      */
     public function delete(string $uri, callable|array $action): ?Route
     {
         return $this->addRoute($uri, $action, RouteMethod::DELETE);
     }
 
-    public function view()
-    {
-        //TODO implement view later
-    }
 
     /**
      * landing to the current uri
@@ -131,7 +132,7 @@ class Router
             $uri = '/';
 
         foreach ($routes as $route) {
-            if($uri === $route['uri']) {
+            if($this->match($uri, $route['instance'], $method)) {
                 return $route['instance']->run();
             }
         }
@@ -139,23 +140,38 @@ class Router
         return null;
     }
 
-    /**
-     * Parse thr route
-     * */
-    public function parseRoute(string $uri = '')
+    public function match(string $uri, Route $route, string $method): bool
     {
-        /*
-         * The current url is test/mohamedKhx
-         * registerd in the router test/:username
-         * */
-    }
+        if($route->hasParams()) {
+            $explodedUri = explode('/', $uri);
+            array_shift($explodedUri);
 
-    /**
-     * Run the specific route
-     * */
-    protected function runRoute()
-    {
+            if(count($explodedUri) < count($route->getExplodedUri())) {
+                return false;
+            }
 
+            foreach ($explodedUri as $key => $value) {
+                if(!isset($route->getExplodedUri()[$key])) return false;
+
+                if(str_contains($route->getExplodedUri()[$key], ':')) {
+                    continue;
+                }
+
+                if($value === $route->getExplodedUri()[$key]) {
+                    continue;
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+        } else {
+            if($uri === $route->getUri()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -165,13 +181,14 @@ class Router
      * @param RouteMethod $method
      *
      * @return bool
-     * */
+     *
+     * @throws Exception
+     */
     public function isRouteExists(string $uri, RouteMethod $method): bool
     {
         foreach ($this->routes[$method->value] as $route) {
             if($route['uri'] === $uri) {
                 throw new \Exception('The Route is already exists');
-                return true;
             }
         }
 
@@ -179,15 +196,43 @@ class Router
     }
 
     /**
-     * Fix the uri from ['example'] tp ['/example']
+     * Check the route name if it's not already in use
+     *
+     * @param string $name
+     * @return bool
+     *
+     * @throws Exception
+     */
+    public function isRouteNameExists(string $name): bool
+    {
+        foreach ($this->routes as $routeMethod) {
+            foreach ($routeMethod as $route) {
+                if($name === $route['name']) {
+                    throw new Exception('The Route name is already in use');
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 1- Fix the uri from ['example'] to ['/example']
+     * 2- Fix the uri from ['/example/'] to ['example']
      *
      * @param string $uri
      * @return string
      * */
     public function parseUri(string $uri): string
     {
+        if($uri === '/') return $uri;
+
         if(!str_starts_with($uri, '/')) {
             $uri = '/' . $uri;
+        }
+
+        if(str_ends_with($uri, '/')) {
+            $strLen = strlen($uri);
+            $uri = str_split($uri, $strLen - 1)[0];
         }
 
         return $uri;
@@ -200,7 +245,8 @@ class Router
      * @param callable|array $action
      * @param RouteMethod $method
      *
-     * @return Route
+     * @return ?Route
+     * @throws Exception
      */
 
     protected function addRoute(string $uri, callable|array $action, RouteMethod $method): ?Route

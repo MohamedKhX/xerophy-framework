@@ -72,6 +72,8 @@ class Route
      */
     protected function parseAction() : mixed
     {
+        $this->parseParamsValues();
+
         if(is_callable($this->action))
             return $this->action;
 
@@ -160,22 +162,17 @@ class Route
     }
 
     /**
-     * return the route name
-     *
-     * @return ?string
-     * */
-    public function getRouteName(): ?string
-    {
-        return $this->routeName;
-    }
-
-    /**
      * Add name for the route
      *
      * @return static;
-     * */
+     *
+     * @throws Exception
+     */
     public function name(string $name): static
     {
+        //Check if the name is not already in use
+        $this->router->isRouteNameExists($name);
+
         $this->routeName = $name;
         return $this;
     }
@@ -191,7 +188,30 @@ class Route
     }
 
     /**
-     * sleep for some time and after that load the route action
+     * Get the route uri $this->uri
+     *
+     * @return string
+     * */
+    public function getUri(): string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * get exploded uri
+     *
+     * @retrun array
+     * */
+    public function getExplodedUri(): array
+    {
+        $arr = explode('/', $this->getUri());
+        array_shift($arr);
+
+        return $arr;
+    }
+
+    /**
+     * sleep for some time and after that run the route action
      *
      * @param int $seconds
      * @return static
@@ -202,15 +222,50 @@ class Route
         return $this;
     }
 
-
-    public function parseParams()
+    /**
+     * Return bool of the route has params
+     *
+     * @return bool
+     * */
+    public function hasParams(): bool
     {
-        /*$url = $this->router->getRequestInstance()->getUrl();
-        $explodedURL = explode('/', $url);*/
+        return (bool) str_contains($this->uri, ':');
     }
 
-    public function params()
+    /**
+     * Parse params
+     *
+     * @return void
+     * */
+    public function parseParamsValues(): void
     {
+        $routeUri   =  explode('/', $this->uri);
+        $requestUri =  explode('/', $this->router->getRequestInstance()->getUrl());
 
+        foreach ($routeUri as $index => $uriCut) {
+            if(str_starts_with($uriCut, ':')) {
+                $uriCut = str_replace(':', '', $uriCut);
+                $this->params[] = $requestUri[$index];
+            }
+        }
+
+    }
+
+    /**
+     * Load view
+     * */
+    public function view()
+    {
+        //TODO implement view later
+    }
+
+    /**
+     * Get the route params
+     *
+     * @return array
+     * */
+    public function getParams(): array
+    {
+        return $this->params;
     }
 }
