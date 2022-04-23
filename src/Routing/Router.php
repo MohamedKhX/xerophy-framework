@@ -66,7 +66,6 @@ class Router
      * @param callable|array $action
      *
      * @return ?Route
-     * @throws Exception
      */
     public function get(string $uri, callable|array $action): ?Route
     {
@@ -80,7 +79,6 @@ class Router
      * @param callable|array $action
      *
      * @return ?Route
-     * @throws Exception
      */
     public function post(string $uri, callable|array $action): ?Route
     {
@@ -94,7 +92,6 @@ class Router
      * @param callable|array $action
      *
      * @return ?Route
-     * @throws Exception
      */
     public function put(string $uri, callable|array $action): ?Route
     {
@@ -108,7 +105,6 @@ class Router
      * @param callable|array $action
      *
      * @return ?Route
-     * @throws Exception
      */
     public function delete(string $uri, callable|array $action): ?Route
     {
@@ -246,7 +242,6 @@ class Router
      * @param RouteMethod $method
      *
      * @return ?Route
-     * @throws Exception
      */
 
     protected function addRoute(string $uri, callable|array $action, RouteMethod $method): ?Route
