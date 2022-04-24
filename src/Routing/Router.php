@@ -50,6 +50,16 @@ class Router
     }
 
     /**
+     * Get the currently dispatched route instance.
+     *
+     * @return ?Route
+     * */
+    public function getRouteInstace(): ?Route
+    {
+        return $this->route;
+    }
+
+    /**
      * get the current Request instance
      *
      * @return Request
@@ -129,6 +139,7 @@ class Router
 
         foreach ($routes as $route) {
             if($this->match($uri, $route['instance'], $method)) {
+                $this->route = $route['instance'];
                 return $route['instance']->run();
             }
         }
@@ -136,6 +147,15 @@ class Router
         return null;
     }
 
+    /**
+     * Match the url
+     *
+     * @param string $url
+     * @param Route  $route
+     * @param string $method
+     *
+     * @return bool
+     * */
     public function match(string $uri, Route $route, string $method): bool
     {
         if($route->hasParams()) {
@@ -220,6 +240,10 @@ class Router
      * */
     public function parseUri(string $uri): string
     {
+        if($uri === '') {
+            return '/';
+        }
+
         if($uri === '/') return $uri;
 
         if(!str_starts_with($uri, '/')) {
