@@ -3,6 +3,7 @@
 namespace Xerophy\Framework\Routing;
 
 use Exception;
+use Xerophy\Framework\View\View;
 
 class Route
 {
@@ -45,6 +46,15 @@ class Route
      * */
     protected Router $router;
 
+    /*
+     * The views folder path
+     * */
+    protected ?string $viewsPath = null;
+
+    /*
+     * The tasks will be run after the route has been parsed
+     * */
+    protected ?array $queue = [];
 
     /**
      * Create a new route instance
@@ -97,14 +107,19 @@ class Route
 
     public function run() : static
     {
+        $this->callTaskByName('before');
+
         $this->parseAction();
 
         if($this->isController()) {
             $this->runFromController();
-            return $this;
+        } else {
+            $this->runCallback();
         }
 
-        $this->runCallback();
+        $this->runQueue();
+
+        $this->callTaskByName('after');
         return $this;
     }
 
@@ -166,7 +181,6 @@ class Route
      *
      * @return static;
      *
-     * @throws Exception
      */
     public function name(string $name): static
     {
@@ -218,8 +232,20 @@ class Route
      */
     public function sleep(int $seconds): static
     {
-        sleep($seconds);
+        $this->registerNewTask('sleep', 'sleepTask', [
+            'seconds' => $seconds
+        ]);
         return $this;
+    }
+
+    /**
+     * Register a task for sleep in the queue
+     *
+     * @return void
+     * */
+    protected function sleepTask(int $seconds): void
+    {
+        sleep($seconds);
     }
 
     /**
@@ -237,7 +263,7 @@ class Route
      *
      * @return void
      * */
-    public function parseParamsValues(): void
+    protected function parseParamsValues(): void
     {
         $routeUri   =  explode('/', $this->uri);
         $requestUri =  explode('/', $this->router->getRequestInstance()->getUrl());
@@ -252,11 +278,39 @@ class Route
     }
 
     /**
-     * Load view
+     * render a view
+     *
+     * @param string $fileName
+     * @param array  $params
+     *
+     * @return void
      * */
-    public function view()
+    public function view(string $fileName, array $params = []): static
     {
-        //TODO implement view later
+        $this->registerNewTask('viewTask', 'viewTask', [
+            'fileName' => $fileName,
+            'params' => $params
+        ]);
+
+        return $this;
+    }
+
+    protected function viewTask(string $fileName, array $params = [])
+    {
+        $view = new View($this->viewsPath, $fileName, $params);
+        echo $view->render();
+    }
+
+    /**
+     * Set views path
+     *
+     * @param string $path
+     * @retrun void
+     * */
+    public function setPath(string $path)
+    {
+        $this->viewsPath = $path;
+        return $this;
     }
 
     /**
@@ -267,5 +321,75 @@ class Route
     public function getParams(): array
     {
         return $this->params;
+    }
+
+    /**
+     * Register a new task in the queue
+     *
+     * @retrun void
+     * */
+    protected function registerNewTask(string $taskName, string $method, array $params = [], bool $event = false): void
+    {
+        $this->queue[$taskName] = [
+            'method' => $method,
+            'params' => $params,
+            'event' => $event
+        ];
+    }
+
+    /**
+     * Run the taks in the queue
+     *
+     * @return void
+     * */
+    protected function runQueue(): void
+    {
+        foreach ($this->queue as $task) {
+            if($task['event'] === true) continue;
+
+            $method = $task['method'];
+            $this->$method(...$task['params']);
+        }
+    }
+
+    /**
+     * Call specific task from the queue by name
+     *
+     * @param string $taskName
+     * */
+    protected function callTaskByName(string $taskName)
+    {
+        if(!isset($this->queue[$taskName])) return;
+
+        $taskMethod = $this->queue[$taskName]['method'];
+        $taskParams = $this->queue[$taskName]['params'];
+
+        $this->$taskMethod(...$taskParams);
+    }
+
+    public function after(callable|null $function = null): static
+    {
+        $this->registerNewTask('after', 'afterTask', [
+            'function' => $function
+        ], true);
+        return $this;
+    }
+
+    protected function afterTask(callable $function)
+    {
+        call_user_func($function);
+    }
+
+    public function before(callable|null $function = null): static
+    {
+        $this->registerNewTask('before', 'beforeTask', [
+            'function' => $function
+        ], true);
+        return $this;
+    }
+
+    protected function beforeTask(callable $function)
+    {
+        call_user_func($function);
     }
 }
