@@ -39,6 +39,8 @@ class Request
 
     /**
      * Get the root URL for the application
+     *
+     * @return string
      * */
     public function root(): string
     {
