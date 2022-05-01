@@ -10,7 +10,7 @@ class Router
     /*
      * The route collection instance.
      * */
-    public array $routes = [];
+    protected array $routes = [];
 
     /*
      * The currently dispatched route instance.
@@ -21,6 +21,11 @@ class Router
      * The request currently being dispatched.
      * */
     protected Request $currentRequest;
+
+    /*
+     * The views path
+     * */
+    protected string $viewsPath;
 
 
     /**
@@ -39,7 +44,7 @@ class Router
      *
      * @return array
      * */
-    public function fillRoutes(): array
+    protected function fillRoutes(): array
     {
         return [
             RouteMethod::GET->value => [],
@@ -121,6 +126,24 @@ class Router
         return $this->addRoute($uri, $action, RouteMethod::DELETE);
     }
 
+    /**
+     * Add a GET route and render the view in the same time
+     *
+     * @param string $uri
+     * @param string $view
+     *
+     * @return Route
+     * */
+    public function view(string $uri, string|array $view): Route
+    {
+        if(is_array($view)) {
+            return $this->addRoute($uri, function () {}, RouteMethod::GET)->view($view[0], $view[1]);
+        }
+        if(is_string($view)) {
+            return $this->addRoute($uri, function () {}, RouteMethod::GET)->view($view);
+        }
+    }
+
 
     /**
      * landing to the current uri
@@ -156,7 +179,7 @@ class Router
      *
      * @return bool
      * */
-    public function match(string $uri, Route $route, string $method): bool
+    protected function match(string $uri, Route $route, string $method): bool
     {
         if($route->hasParams()) {
             $explodedUri = explode('/', $uri);
@@ -224,11 +247,27 @@ class Router
         foreach ($this->routes as $routeMethod) {
             foreach ($routeMethod as $route) {
                 if($name === $route['name']) {
-                    throw new Exception('The Route name is already in use');
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Get route by name
+     *
+     * @param string $name
+     * @return ?Route
+     * */
+    public function getRouteByName(string $name): ?Route
+    {
+        if(!$this->isRouteNameExists($name)) return null;
+
+        foreach ($this->routes[RouteMethod::GET->value] as $key => $value) {
+            return $value['name'] === $name ? $value['instance'] : null;
+        }
+        return null;
     }
 
     /**
@@ -238,7 +277,7 @@ class Router
      * @param string $uri
      * @return string
      * */
-    public function parseUri(string $uri): string
+    protected function parseUri(string $uri): string
     {
         if($uri === '') {
             return '/';
@@ -256,6 +295,17 @@ class Router
         }
 
         return $uri;
+    }
+
+    /**
+     * Set views path
+     *
+     * @param string $path
+     * @return void
+     */
+    public function setViewsPath(string $path): void
+    {
+        $this->viewsPath = $path;
     }
 
     /**
@@ -280,6 +330,8 @@ class Router
             action: $action,
             router: $this
         );
+
+        $routeInstance->setPath($this->viewsPath);
 
         $this->routes[$method->value][] = [
             'uri' => $uri,
