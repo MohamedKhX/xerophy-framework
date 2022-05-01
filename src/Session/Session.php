@@ -6,10 +6,19 @@ use Xerophy\Framework\Http\Request;
 
 class Session
 {
+    /*
+     * The current Url.
+     * */
     protected string $currentUrl;
 
-    protected ?string $previosUrl;
+    /*
+     * The previous Url.
+     * */
+    protected ?string $previousUrl;
 
+    /*
+     * The request instance
+     * */
     protected Request $request;
 
     /**
@@ -21,7 +30,7 @@ class Session
     {
         $this->request = $request;
         $this->currentUrl = $this->request->getUrl();
-        $this->previosUrl = $_SESSION['Previos_Url'];
+        $this->previousUrl = $_SESSION['Previous_Url'];
     }
 
     /**
@@ -35,17 +44,17 @@ class Session
     }
 
     /**
-     * Get the previos url
+     * Get the previous url
      *
      * @return ?string
      * */
-    public function getPreviosUrl(): ?string
+    public function getPreviousUrl(): ?string
     {
-        return $this->previosUrl ?? null;
+        return $this->previousUrl ?? null;
     }
 
     public function __destruct()
     {
-        $_SESSION['Previos_Url'] = $this->currentUrl;
+        $_SESSION['Previous_Url'] = $this->currentUrl;
     }
 }

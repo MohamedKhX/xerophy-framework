@@ -3,6 +3,7 @@
 namespace Xerophy\Framework\Routing;
 
 use Exception;
+use Xerophy\Framework\Container\Container;
 use Xerophy\Framework\View\View;
 
 class Route
@@ -130,7 +131,7 @@ class Route
      * */
     protected function runCallback(): void
     {
-        call_user_func_array($this->action, $this->params);
+        call_user_func_array($this->action, [...$this->methodInject($this->action) ,...$this->params]);
     }
 
     /**
@@ -141,7 +142,43 @@ class Route
     protected function runFromController(): void
     {
         $method = $this->action;
-        $this->controller->$method(...$this->params);
+        $this->controller->$method(...$this->methodInject($method), ...$this->params);
+
+    }
+
+    /**
+     * inject the passed classes to the method or function
+     *
+     * @param string|callable $method
+     * @return array
+     * */
+    protected function methodInject(string|callable $method): array
+    {
+        if($this->isController()) {
+            $reflectionMethod = new \ReflectionMethod($this->controller, $method);
+        } else {
+            $reflectionMethod = new \ReflectionFunction($method);
+        }
+
+
+        $params = $reflectionMethod->getParameters();
+
+        return array_filter(
+            array_map(
+                function (\ReflectionParameter $parameter) {
+
+                    $paramType = $parameter->getType();
+                    $paramName = $parameter->getName();
+
+                    if($paramType instanceof \ReflectionNamedType) {
+                        return Container::$container->getObject($paramType->getName());
+                    }
+
+                    return null;
+
+                }, $params),
+            fn($item) => !is_null($item)
+        ) ;
     }
 
     /**
@@ -181,11 +218,14 @@ class Route
      *
      * @return static;
      *
+     * @throws Exception
      */
     public function name(string $name): static
     {
         //Check if the name is not already in use
-        $this->router->isRouteNameExists($name);
+        if($this->router->isRouteNameExists($name)) {
+            throw new Exception('The Route name is already in use');
+        }
 
         $this->routeName = $name;
         return $this;
@@ -209,6 +249,33 @@ class Route
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    /**
+     * Get the route uri with passed params
+     * This method only for routes that has params
+     *
+     * @param array $params
+     * @return string
+     * */
+    public function getUriAndPassParams(array $params): string
+    {
+        //test/:test
+        $explodedUri = explode('/', $this->getUri());
+        $finelUri = [];
+
+        foreach ($explodedUri as $uriCute) {
+            if($uriCute === '') continue;
+
+            if(str_contains($uriCute, ':')) {
+                $finelUri[] = $params[substr($uriCute, 1)] ?? '';
+                continue;
+            }
+
+            $finelUri[] = $uriCute;
+        }
+
+        return join('/', $finelUri);
     }
 
     /**
@@ -241,8 +308,9 @@ class Route
     /**
      * Register a task for sleep in the queue
      *
+     * @param int $seconds
      * @return void
-     * */
+     */
     protected function sleepTask(int $seconds): void
     {
         sleep($seconds);
@@ -297,6 +365,8 @@ class Route
 
     protected function viewTask(string $fileName, array $params = [])
     {
+        $params = array_combine($params, $this->params);
+
         $view = new View($this->viewsPath, $fileName, $params);
         echo $view->render();
     }
@@ -305,8 +375,10 @@ class Route
      * Set views path
      *
      * @param string $path
+     * @return Route
+     *
      * @retrun void
-     * */
+     */
     public function setPath(string $path)
     {
         $this->viewsPath = $path;
@@ -338,7 +410,7 @@ class Route
     }
 
     /**
-     * Run the taks in the queue
+     * Run the task from the queue
      *
      * @return void
      * */
@@ -367,29 +439,62 @@ class Route
         $this->$taskMethod(...$taskParams);
     }
 
-    public function after(callable|null $function = null): static
+    /**
+     * Run a callback function after parsing
+     *
+     * @param callable $function
+     *
+     * @return static
+     * */
+    public function after(callable $function): static
     {
         $this->registerNewTask('after', 'afterTask', [
-            'function' => $function
+            'function' => $function,
+            'params' => $this->params
         ], true);
+
         return $this;
     }
 
-    protected function afterTask(callable $function)
+    /**
+     * Register after task in the queue
+     *
+     * @param callable $function
+     * @param array $params
+     *
+     * @return void
+     */
+    protected function afterTask(callable $function, array $params): void
     {
-        call_user_func($function);
+        $function($params);
     }
 
-    public function before(callable|null $function = null): static
+    /**
+     * Run a callback function before parsing
+     *
+     * @param callable $function
+     *
+     * @return static
+     * */
+    public function before(callable $function): static
     {
         $this->registerNewTask('before', 'beforeTask', [
-            'function' => $function
+            'function' => $function,
+            'params' => &$this->params
         ], true);
         return $this;
     }
 
-    protected function beforeTask(callable $function)
+    /**
+     * Register before task in the queue
+     *
+     * @param callable $function
+     * @param array $params
+     *
+     * @return void
+     */
+    protected function beforeTask(callable $function, array &$params)
     {
-        call_user_func($function);
+        $function($params);
     }
 }

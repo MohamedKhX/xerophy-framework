@@ -30,10 +30,11 @@ class Redirector
      * Create a new redirect response to the "home" route.
      *
      * @param int $status
-     * @return
+     * @return void
      * */
-    public function home(int $status = 302)
+    public function home(int $status = 302): void
     {
+
     }
 
     /**
@@ -42,9 +43,9 @@ class Redirector
      * @param int $status
      * @param array $headers
      *
-     * @return
+     * @return void
      * */
-    public function back(int $status = 302, array $headers = [])
+    public function back(int $status = 302, array $headers = []): void
     {
         header(
             'Location: ' . $this->generator->previous(),
@@ -58,9 +59,9 @@ class Redirector
      * @param int $status
      * @param array $headers
      *
-     * @return
+     * @return void
      * */
-    public function refresh(int $status = 302, array $headers = [])
+    public function refresh(int $status = 302, array $headers = []): void
     {
         
     }
@@ -72,9 +73,9 @@ class Redirector
      * @param int $status
      * @param array $headers
      *
-     * @return
+     * @return void
      * */
-    public function to(string $path, int $status = 302, array $headers = [])
+    public function to(string $path, int $status = 302, array $headers = []): void
     {
         header(
             'Location: ' . $path,
@@ -89,9 +90,9 @@ class Redirector
      * @param int $status
      * @param array $header
      *
-     * @return
+     * @return void
      * */
-    public function away(string $path, int $status = 302, array $header = [])
+    public function away(string $path, int $status = 302, array $header = []): void
     {
 
     }
@@ -104,9 +105,9 @@ class Redirector
      * @param int $status
      * @param array $header
      *
-     * @return
+     * @return void
      * */
-    public function route(string $routeName, array $params = [], int $status = 302, array $header = [])
+    public function route(string $routeName, array $params = [], int $status = 302, array $header = []): void
     {
 
     }
@@ -119,9 +120,9 @@ class Redirector
      * @param int $status
      * @param array $headers
      *
-     * @return
+     * @return void
      * */
-    public function action(string|array $action, array $params = [], int $status = 302, array $headers = [])
+    public function action(string|array $action, array $params = [], int $status = 302, array $headers = []): void
     {
 
     }

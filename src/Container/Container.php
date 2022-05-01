@@ -8,13 +8,19 @@ use Xerophy\Framework\Routing\UrlGenerator;
 
 class Container
 {
+    /*
+     * SharedObjects between classes
+     * */
     public array $sharedObjects = [];
 
+    /*
+     * Not sharedObjects
+     * */
     protected array $objects = [];
 
     /*
      * The global container instance (created and the application)
-     * Note (This contrainer is linked to the application)
+     * Note (This container is linked to the application)
      * */
     public static Container $container;
 

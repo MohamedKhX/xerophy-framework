@@ -59,11 +59,11 @@ class UrlGenerator
     /**
      * Get the URL for the previous request.
      *
-     * @return string
+     * @return string|null
      */
     public function previous(): ?string
     {
-        return $this->session->getPreviosUrl();
+        return $this->session->getPreviousUrl();
     }
 
     /**
@@ -86,8 +86,11 @@ class UrlGenerator
     /**
      * Get the URL to a controller action.
      *
+     * @param string|array $action
+     * @param array $params
+     *
      * @return string
-     * */
+     */
     public function action(string|array $action, $params = []): string
     {
 

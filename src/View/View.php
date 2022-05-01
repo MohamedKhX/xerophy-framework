@@ -20,7 +20,7 @@ class View
     protected string $fileName;
 
     /*
-     * The tiwg loader
+     * The twig loader
      * */
     protected \Twig\Loader\FilesystemLoader $loader;
 

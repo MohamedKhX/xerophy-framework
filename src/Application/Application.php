@@ -81,8 +81,10 @@ class Application extends Container
      * Create a new application instance.
      *
      * @param string $basePath
+     * @param array $paths
+     *
      * @return void
-     * */
+     */
     public function __construct(string $basePath ,array $paths)
     {
         session_start();
@@ -151,7 +153,7 @@ class Application extends Container
     }
 
     /**
-     * Bootup the application.
+     * Boot the application.
      *
      * @return static
      * */
