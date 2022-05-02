@@ -385,9 +385,9 @@ class Route
      * @param string $path
      * @return Route
      *
-     * @retrun void
+     * @retrun static
      */
-    public function setPath(string $path)
+    public function setPath(string $path): static
     {
         $this->viewsPath = $path;
         return $this;
