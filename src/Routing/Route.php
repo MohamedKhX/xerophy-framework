@@ -363,7 +363,15 @@ class Route
         return $this;
     }
 
-    protected function viewTask(string $fileName, array $params = [])
+    /**
+     * Register view task in the queue
+     *
+     * @param string $fileName
+     * @param array $params
+     *
+     * @return void
+     */
+    protected function viewTask(string $fileName, array $params = []): void
     {
         $params = array_combine($params, $this->params);
 
