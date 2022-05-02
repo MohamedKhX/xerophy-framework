@@ -262,20 +262,20 @@ class Route
     {
         //test/:test
         $explodedUri = explode('/', $this->getUri());
-        $finelUri = [];
+        $finalUri = [];
 
         foreach ($explodedUri as $uriCute) {
             if($uriCute === '') continue;
 
             if(str_contains($uriCute, ':')) {
-                $finelUri[] = $params[substr($uriCute, 1)] ?? '';
+                $finalUri[] = $params[substr($uriCute, 1)] ?? '';
                 continue;
             }
 
-            $finelUri[] = $uriCute;
+            $finalUri[] = $uriCute;
         }
 
-        return join('/', $finelUri);
+        return join('/', $finalUri);
     }
 
     /**
