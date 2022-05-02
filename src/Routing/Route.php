@@ -351,7 +351,7 @@ class Route
      * @param string $fileName
      * @param array  $params
      *
-     * @return void
+     * @return static
      * */
     public function view(string $fileName, array $params = []): static
     {
