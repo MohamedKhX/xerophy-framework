@@ -2,7 +2,6 @@
 
 namespace Xerophy\Framework\Container;
 
-use ReflectionException;
 use Xerophy\Framework\Container\Exceptions\ContainerException;
 use Xerophy\Framework\Http\Request;
 use Xerophy\Framework\Routing\UrlGenerator;
@@ -106,7 +105,7 @@ class Container
      * Create a new object and set it in $this->sharedObjects
      *
      * @param string $id
-     * @return object
+     * @return void
      * */
     public function set(string $id): object
     {
@@ -114,13 +113,11 @@ class Container
     }
 
     /**
-     * Create a new object by full class name and set their dependencies (if any)
+     * Create a new object by full class name and set thier dependencies (if any)
      *
      * @param string $id
      * @return object
-     *
-     * @throws ContainerException|ReflectionException
-     */
+     * */
     public function createObject(string $id): object
     {
         $reflectionClass = new \ReflectionClass($id);

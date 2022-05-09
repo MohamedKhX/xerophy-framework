@@ -53,6 +53,36 @@ class View
         $this->twigOptions = $twigOptions;
         $this->loader = new \Twig\Loader\FilesystemLoader($this->path);
         $this->twig = new \Twig\Environment($this->loader, $this->twigOptions);
+
+        $routeFunction = new \Twig\TwigFunction('route', function (string $routeName, array $params = []) {
+            /**
+             * @var $router \Xerophy\Framework\Routing\Router
+             * */
+            $router = \Xerophy\Framework\Container\Container::$container->getObject(\Xerophy\Framework\Routing\Router::class);
+            return $router->getRouteByName($routeName)->getUriAndPassParams($params);
+        });
+
+        $errorsFunction = new \Twig\TwigFunction('errors', function () {
+            return errors();
+        });
+
+        $methodFunction = new \Twig\TwigFunction('method', function (string $method) {
+
+            if($method === 'DELETE' || $method === 'delete') {
+                echo '<input name="_method" hidden type="text" value="DELETE">';
+                return;
+            }
+            if($method === 'PUT' || $method === 'put') {
+                echo '<input name="_method" hidden type="text" value="PUT">';
+                return;
+            }
+
+            throw new \Exception('The method is not supported');
+        });
+
+        $this->twig->addFunction($routeFunction);
+        $this->twig->addFunction($errorsFunction);
+        $this->twig->addFunction($methodFunction);
     }
 
     /**

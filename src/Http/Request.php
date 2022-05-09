@@ -3,8 +3,27 @@
 namespace Xerophy\Framework\Http;
 
 
+use Xerophy\Framework\Container\Container;
+use Xerophy\Framework\Routing\Redirector;
+use Xerophy\Framework\Validation\Validator;
+
 class Request
 {
+
+    /**
+     * Create a new Request instance.
+     *
+     * @return void
+     * */
+    public function __construct()
+    {
+        if($this->fieldContent('_method') === 'DELETE') {
+            $_SERVER['REQUEST_METHOD'] = 'DELETE';
+        }
+        if($this->fieldContent('_method') === 'PUT') {
+            $_SERVER['REQUEST_METHOD'] = 'PUT';
+        }
+    }
 
     /**
      * Get the request method
@@ -14,6 +33,30 @@ class Request
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
+     *
+     * */
+    public function validate(array $data): void
+    {
+       $toValidate = [];
+
+       foreach ($data as $datum => $value) {
+           $toValidate[$datum] = [
+               'content' => $this->fieldContent($datum),
+               'rules' => $value
+           ];
+       }
+
+       $validator = new Validator();
+
+       $validator->make($toValidate);
+
+       if($validator->getErrors()) {
+           (Container::$container->getObject(Redirector::class))->back()->withErrors();
+           exit();
+       }
     }
 
     /**
@@ -136,5 +179,10 @@ class Request
     public function getScriptName(): ?string
     {
         return $_SERVER['SCRIPT_NAME'] ?? null;
+    }
+
+    public function __get(string $name)
+    {
+        return $this->fieldContent($name);
     }
 }

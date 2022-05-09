@@ -265,7 +265,15 @@ class Router
         if(!$this->isRouteNameExists($name)) return null;
 
         foreach ($this->routes[RouteMethod::GET->value] as $key => $value) {
-            return $value['name'] === $name ? $value['instance'] : null;
+            if($value['name'] === $name) {
+                return $value['instance'];
+            }
+        }
+
+        foreach ($this->routes[RouteMethod::DELETE->value] as $key => $value) {
+            if($value['name'] === $name) {
+                return $value['instance'];
+            }
         }
         return null;
     }

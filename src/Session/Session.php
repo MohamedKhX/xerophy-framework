@@ -6,6 +6,12 @@ use Xerophy\Framework\Http\Request;
 
 class Session
 {
+
+    /*
+     * when we create the error save it to the next redierct->back->with(errors -> errors)
+     * */
+
+
     /*
      * The current Url.
      * */
@@ -21,6 +27,14 @@ class Session
      * */
     protected Request $request;
 
+    /*
+     * Error if there
+     * */
+    protected array|null $errors;
+
+
+    public bool $saveErrorsToNextRedirection = false;
+
     /**
      * Create a new Session instance
      *
@@ -30,7 +44,8 @@ class Session
     {
         $this->request = $request;
         $this->currentUrl = $this->request->getUrl();
-        $this->previousUrl = $_SESSION['Previous_Url'];
+        $this->previousUrl = $_SESSION['Previous_Url'] ?? null;
+        $this->errors = isset($_SESSION['Errors']) ? $_SESSION['Errors'] : null;
     }
 
     /**
@@ -53,8 +68,29 @@ class Session
         return $this->previousUrl ?? null;
     }
 
+    /**
+     * Get errors if there
+     *
+     * @return array|null
+     * */
+    public function getErrors(): array|null
+    {
+        return $this->errors;
+    }
+
+    public function createError(string $errorName, string $errorMessage)
+    {
+        $_SESSION['Errors'][$errorName] = $errorMessage;
+    }
+
     public function __destruct()
     {
+        if(!$this->saveErrorsToNextRedirection) {
+            unset($_SESSION['Errors']);
+        } else {
+            $this->saveErrorsToNextRedirection = false;
+        }
+
         $_SESSION['Previous_Url'] = $this->currentUrl;
     }
 }

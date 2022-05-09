@@ -35,7 +35,7 @@ class Validator
 
     public function getErrors()
     {
-        return $this->errorBag->errors;
+        return $this->errorBag->getErrors();
     }
 
     /**
@@ -50,6 +50,7 @@ class Validator
             $item['rules'] = $this->resolve($item['rules']);
             return $item;
         }, $data);
+
 
         $this->validate($data);
     }
@@ -96,7 +97,6 @@ class Validator
         if(is_array($rule)) {
             return $this->createRule($rule[0], array_slice($rule, 1));
         }
-
         return $this->createRule($rule);
     }
 

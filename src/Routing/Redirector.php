@@ -3,6 +3,9 @@
 namespace Xerophy\Framework\Routing;
 
 
+use Xerophy\Framework\Container\Container;
+use Xerophy\Framework\Session\Session;
+
 class Redirector
 {
     /*
@@ -13,7 +16,7 @@ class Redirector
     /*
      * The session store instance
      * */
-    protected $session;
+    protected Session $session;
 
     /**
      * Create a new Redirector instance
@@ -24,6 +27,7 @@ class Redirector
     public function __construct(UrlGenerator $generator)
     {
         $this->generator = $generator;
+        $this->session = Container::$container->getObject(Session::class);
     }
 
     /**
@@ -43,14 +47,16 @@ class Redirector
      * @param int $status
      * @param array $headers
      *
-     * @return void
+     * @return static
      * */
-    public function back(int $status = 302, array $headers = []): void
+    public function back(int $status = 302, array $headers = []): static
     {
         header(
             'Location: ' . $this->generator->previous(),
             response_code: $status
         );
+
+        return $this;
     }
 
     /**
@@ -78,7 +84,8 @@ class Redirector
     public function to(string $path, int $status = 302, array $headers = []): void
     {
         header(
-            'Location: ' . $path,
+            'Location: /' . $path,
+            false,
             response_code: $status
         );
     }
@@ -127,6 +134,11 @@ class Redirector
 
     }
 
+    public function withErrors()
+    {
+        $this->session->saveErrorsToNextRedirection = true;
+    }
+
     /**
      * Get the URL generator instance
      *
@@ -140,10 +152,10 @@ class Redirector
     /**
      * Set the active session
      *
-     * @param
+     * @param Session $session
      * @return
      * */
-    public function setSession($session)
+    public function setSession(Session $session)
     {
         $this->session = $session;
     }

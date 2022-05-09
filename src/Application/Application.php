@@ -3,6 +3,8 @@
 namespace Xerophy\Framework\Application;
 
 use Xerophy\Framework\Container\Container;
+use Xerophy\Framework\Database\Database;
+use Xerophy\Framework\Database\Managers\MySqlManager;
 use Xerophy\Framework\Http\Request;
 use Xerophy\Framework\Http\Response;
 use Xerophy\Framework\Routing\Redirector;
@@ -77,6 +79,11 @@ class Application extends Container
      * */
     protected string $appVersion;
 
+    /*
+     * The database instance.
+     * */
+    protected static Database $database;
+
     /**
      * Create a new application instance.
      *
@@ -102,6 +109,17 @@ class Application extends Container
         Container::$container = $this;
 
         $this->router->setViewsPath($this->getViewsPath());
+
+        static::$database = new Database($this->getObject(MySqlManager::class));
+        static::$database->init();
+    }
+
+    /**
+     * Get the database instance.
+     * */
+    public static function DB()
+    {
+        return static::$database;
     }
 
     /**

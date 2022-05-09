@@ -12,7 +12,6 @@ trait Resolver
         $arr = [];
 
         foreach (static::convertToArray($str) as $item) {
-
             if(is_array($item)) {
                 $arr[] = [RuleMap::getRule($item[0]), ...array_slice($item, 1)];
                 continue;
