@@ -100,6 +100,8 @@ class Request
      * */
     public function getUrl(): string
     {
+        if(!isset($_SERVER['REQUEST_URI'])) return '';
+
         $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
         return rtrim(preg_replace('/\?.*/', '', $uri), '/');
     }
