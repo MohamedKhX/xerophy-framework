@@ -16,6 +16,7 @@
     "require": {
         "symfony/http-foundation": "^6.0",
         "twig/twig": "^3.3",
-      "ext-pdo": "*"
+      "ext-pdo": "*",
+        "symfony/console": "^6.0"
     }
 }
