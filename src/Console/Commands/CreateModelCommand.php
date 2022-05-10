@@ -36,13 +36,13 @@ class CreateModelCommand extends Command
         }
         model;
 
-        $fileFullPath = $modelsPath . $modelName . '.php';
+        $fileFullPath = $modelsPath . '\\' . $modelName . '.php';
 
         if(file_exists($fileFullPath)) {
             $output->write('The Model is already exists');
             return Command::FAILURE;
         } else {
-            file_put_contents($modelName, $modelCode);
+            file_put_contents($fileFullPath, $modelCode);
         }
 
         $output->write('Model created successfully');

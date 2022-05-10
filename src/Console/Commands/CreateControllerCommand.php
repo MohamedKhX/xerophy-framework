@@ -40,13 +40,13 @@ class CreateControllerCommand extends Command
         }
         controller;
 
-        $fileFullPath = $controllersPath . $controllerName . '.php';
+        $fileFullPath = $controllersPath . '\\' . $controllerName . '.php';
 
         if(file_exists($fileFullPath)) {
             $output->write('The Controller is already exists');
             return Command::FAILURE;
         } else {
-            file_put_contents($controllerName, $controllerCode);
+            file_put_contents($fileFullPath, $controllerCode);
         }
 
         $output->write('Controller created successfully');
