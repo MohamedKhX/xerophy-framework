@@ -40,7 +40,7 @@ class CreateControllerCommand extends Command
         }
         controller;
 
-        $fileFullPath = __DIR__ . '\..\Controllers\\' . $controllerName . '.php';
+        $fileFullPath = $controllersPath . $controllerName . '.php';
 
         if(file_exists($fileFullPath)) {
             $output->write('The Controller is already exists');

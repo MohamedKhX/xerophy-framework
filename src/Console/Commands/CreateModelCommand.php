@@ -36,7 +36,7 @@ class CreateModelCommand extends Command
         }
         model;
 
-        $fileFullPath = __DIR__ . '\..\Models\\' . $modelName . '.php';
+        $fileFullPath = $modelsPath . $modelName . '.php';
 
         if(file_exists($fileFullPath)) {
             $output->write('The Model is already exists');
