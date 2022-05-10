@@ -8,7 +8,7 @@ use Xerophy\Framework\Support\Str;
 abstract class Model
 {
 
-    protected static Model $instance;
+    protected static $instance;
 
     /*
      * The fallible fields
