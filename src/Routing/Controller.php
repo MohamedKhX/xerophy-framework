@@ -8,14 +8,22 @@ use Xerophy\Framework\View\View;
 
 class Controller
 {
-    public function render(string $filename, array $params = [])
+    /**
+     * Render a view
+     *
+     * @param string $filename
+     * @param array $params
+     *
+     * @return void
+     * */
+    public function render(string $filename, array $params = []): void
     {
         $app = Container::$container;
-
-        (new View(
-           path: $app->getViewsPath(),
-           fileName: $filename,
-           params: $params
-        ))->render();
+        $view = new View(
+            path: $app->getViewsPath(),
+            fileName: $filename,
+            params: $params
+        );
+        $view->render();
     }
 }

@@ -36,7 +36,10 @@ class Request
     }
 
     /**
+     * Validate the request data
      *
+     * @param array $data
+     * @return void
      * */
     public function validate(array $data): void
     {
@@ -181,6 +184,12 @@ class Request
         return $_SERVER['SCRIPT_NAME'] ?? null;
     }
 
+    /**
+     * Get fieldContent if there
+     *
+     * @param string $name
+     * @return string
+     * */
     public function __get(string $name)
     {
         return $this->fieldContent($name);

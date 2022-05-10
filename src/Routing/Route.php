@@ -3,6 +3,7 @@
 namespace Xerophy\Framework\Routing;
 
 use Exception;
+use ReflectionException;
 use Xerophy\Framework\Container\Container;
 use Xerophy\Framework\View\View;
 
@@ -151,7 +152,9 @@ class Route
      *
      * @param string|callable $method
      * @return array
-     * */
+     *
+     * @throws ReflectionException
+     */
     protected function methodInject(string|callable $method): array
     {
         if($this->isController()) {

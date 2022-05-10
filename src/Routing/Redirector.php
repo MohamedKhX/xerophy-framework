@@ -107,7 +107,7 @@ class Redirector
     /**
      * Create a new redirect response to a named route.
      *
-     * @param int $routeName
+     * @param string $routeName
      * @param array $params
      * @param int $status
      * @param array $header
@@ -134,6 +134,9 @@ class Redirector
 
     }
 
+    /**
+     *
+     * */
     public function withErrors()
     {
         $this->session->saveErrorsToNextRedirection = true;
@@ -144,7 +147,7 @@ class Redirector
      *
      * @return UrlGenerator
      * */
-    public function getUrlGenerator()
+    public function getUrlGenerator(): UrlGenerator
     {
         return $this->generator;
     }
@@ -153,9 +156,9 @@ class Redirector
      * Set the active session
      *
      * @param Session $session
-     * @return
+     * @return void
      * */
-    public function setSession(Session $session)
+    public function setSession(Session $session): void
     {
         $this->session = $session;
     }

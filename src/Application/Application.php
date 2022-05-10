@@ -84,6 +84,11 @@ class Application extends Container
      * */
     protected static Database $database;
 
+    /*
+     * The Session instance
+     * */
+    protected Session $session;
+
     /**
      * Create a new application instance.
      *

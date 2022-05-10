@@ -7,27 +7,34 @@ use Xerophy\Framework\Support\Str;
 
 abstract class Model
 {
-    protected static $instance;
 
-    protected array $fillable = [];
+    protected static Model $instance;
 
+    /*
+     * The fallible fields
+     * */
+    protected array $fallible = [];
+
+    /*
+     * Create a new Model instance
+     * */
     public function __construct()
     {
         foreach (self::getFields() as $field) {
             if($field !== 'id') {
-                $this->fillable[] = $field;
+                $this->fallible[] = $field;
             }
         }
     }
 
-    public static function create(array $attributes)
+    public static function create(array $attributes): bool
     {
         self::$instance = static::class;
 
         return Application::DB()->create($attributes);
     }
 
-    public static function all()
+    public static function all(): array
     {
         self::$instance = static::class;
 
@@ -83,7 +90,7 @@ abstract class Model
     {
         $toFill = [];
 
-        foreach ($this->fillable as $item) {
+        foreach ($this->fallible as $item) {
             $toFill[$item] = $this->$item;
         }
 
