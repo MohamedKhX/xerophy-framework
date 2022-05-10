@@ -42,7 +42,7 @@ class CreateModelCommand extends Command
             $output->write('The Model is already exists');
             return Command::FAILURE;
         } else {
-            file_put_contents($fileFullPath, $modelCode);
+            file_put_contents($modelName, $modelCode);
         }
 
         $output->write('Model created successfully');

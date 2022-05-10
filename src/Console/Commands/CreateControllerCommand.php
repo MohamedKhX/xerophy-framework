@@ -46,7 +46,7 @@ class CreateControllerCommand extends Command
             $output->write('The Controller is already exists');
             return Command::FAILURE;
         } else {
-            file_put_contents($fileFullPath, $controllerCode);
+            file_put_contents($controllerName, $controllerCode);
         }
 
         $output->write('Controller created successfully');

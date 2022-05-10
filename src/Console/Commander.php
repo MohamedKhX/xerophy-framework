@@ -80,8 +80,4 @@ class Commander
         $console->add(new CreateModelCommand($this->getModelsPath()));
     }
 
-    public function run(\Symfony\Component\Console\Application $console)
-    {
-        $console->run();
-    }
 }
