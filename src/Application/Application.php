@@ -203,4 +203,15 @@ class Application extends Container
     {
         return $this->paths['Views'];
     }
+
+    /**
+     * Get specific path from the main application
+     *
+     * @param string $pathName
+     * @return string
+     * */
+    public function getPath(string $pathName): string
+    {
+        return $this->paths[$pathName];
+    }
 }
