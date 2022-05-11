@@ -13,19 +13,19 @@ class MySqlManager implements DatabaseManager
     /*
      * The PDO instance.
      * */
-    protected PDO $PDO;
+    protected ?PDO $PDO;
 
     public function __construct()
     {
         $this->PDO = $this->createPDOInstance();
     }
 
-    public function connect(): PDO
+    public function connect(): ?PDO
     {
         return $this->PDO;
     }
 
-    protected function createPDOInstance(): PDO
+    protected function createPDOInstance(): ?PDO
     {
         try {
             return new PDO(
@@ -38,7 +38,7 @@ class MySqlManager implements DatabaseManager
         } catch (\PDOException $exception) {
 
         }
-
+        return null;
     }
 
     /**

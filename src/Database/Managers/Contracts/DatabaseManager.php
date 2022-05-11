@@ -11,7 +11,7 @@ interface DatabaseManager
      *
      * @return PDO
      * */
-    public function connect(): PDO;
+    public function connect(): ?PDO;
 
     /**
      * Query the database

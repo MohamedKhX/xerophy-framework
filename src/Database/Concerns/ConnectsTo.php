@@ -6,7 +6,7 @@ use Xerophy\Framework\Database\Managers\Contracts\DatabaseManager;
 
 trait ConnectsTo
 {
-    protected function connect(DatabaseManager $manager): \PDO
+    protected function connect(DatabaseManager $manager): ?\PDO
     {
         return $manager->connect();
     }
