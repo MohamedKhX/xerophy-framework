@@ -3,7 +3,9 @@
 namespace Xerophy\Framework\Routing;
 
 use Exception;
+use Xerophy\Framework\Application\Application;
 use Xerophy\Framework\Http\Request;
+use Xerophy\Framework\View\View;
 
 class Router
 {
@@ -59,7 +61,7 @@ class Router
      *
      * @return ?Route
      * */
-    public function getRouteInstace(): ?Route
+    public function getRouteInstance(): ?Route
     {
         return $this->route;
     }
@@ -166,8 +168,20 @@ class Router
                 return $route['instance']->run();
             }
         }
-
+        $this->load404Page();
         return null;
+    }
+
+    /**
+     * Render a 404 page
+     * */
+    protected function load404Page()
+    {
+        $view = new View(
+            path: $this->viewsPath,
+            fileName: $this->viewsPath . '\404.html.twig'
+        );
+        $view->render();
     }
 
     /**
