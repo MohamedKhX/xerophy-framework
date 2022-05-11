@@ -114,6 +114,7 @@ class Application extends Container
         Container::$container = $this;
 
         $this->router->setViewsPath($this->getViewsPath());
+        $this->router->set404Path($this->getPath('404-page'));
 
         static::$database = new Database($this->getObject(MySqlManager::class));
         static::$database->init();

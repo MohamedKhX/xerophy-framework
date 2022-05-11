@@ -29,6 +29,11 @@ class Router
      * */
     protected string $viewsPath;
 
+    /*
+     * The 404-page path
+     * */
+    protected string $page404Path;
+
 
     /**
      * Create an instance
@@ -179,7 +184,7 @@ class Router
     {
         $view = new View(
             path: $this->viewsPath,
-            fileName: $this->viewsPath . '\404.html.twig'
+            fileName: $this->page404Path
         );
         $view->render();
     }
@@ -328,6 +333,17 @@ class Router
     public function setViewsPath(string $path): void
     {
         $this->viewsPath = $path;
+    }
+
+    /**
+     * Set 404 path
+     *
+     * @param string $path
+     * @return void
+     */
+    public function set404Path(string $path): void
+    {
+        $this->page404Path = $path;
     }
 
     /**
