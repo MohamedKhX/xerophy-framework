@@ -2,14 +2,12 @@
 
 namespace Xerophy\Framework\Application;
 
+use Symfony\Component\Dotenv\Dotenv;
 use Xerophy\Framework\Container\Container;
 use Xerophy\Framework\Database\Database;
 use Xerophy\Framework\Database\Managers\MySqlManager;
 use Xerophy\Framework\Http\Request;
-use Xerophy\Framework\Http\Response;
-use Xerophy\Framework\Routing\Redirector;
 use Xerophy\Framework\Routing\Router;
-use Xerophy\Framework\Routing\UrlGenerator;
 use Xerophy\Framework\Session\Session;
 
 class Application extends Container
@@ -101,6 +99,8 @@ class Application extends Container
     {
         session_start();
 
+        $this->loadEnv();
+
         $this->basePath = $basePath;
         $this->paths = $paths;
 
@@ -108,8 +108,8 @@ class Application extends Container
         $this->router = $this->getObject(Router::class);
         $this->session = $this->getObject(Session::class);
 
-        //$this->setAppName($_ENV['APP_NAME']);
-        //$this->setAppVersion($_ENV['APP_VERSION']);
+        $this->setAppName($_ENV['APP_NAME']);
+        $this->setAppVersion($_ENV['APP_VERSION']);
 
         Container::$container = $this;
 
@@ -125,6 +125,17 @@ class Application extends Container
     public static function DB(): Database
     {
         return static::$database;
+    }
+
+    /**
+     * Parse env file
+     *
+     * @return void
+     * */
+    public function loadEnv(): void
+    {
+        $dotenv = new Dotenv();
+        $dotenv->load($this->getPath('Env'));
     }
 
     /**
