@@ -27,17 +27,12 @@ class MySqlManager implements DatabaseManager
 
     protected function createPDOInstance(): PDO
     {
-        /*return new PDO(
+        return new PDO(
             $_ENV['DB_DRIVER'].
             ":host=" . $_ENV['DB_HOST'].
             ";dbname=" . $_ENV['DB_DATABASE'],
             $_ENV['DB_USERNAME'],
             $_ENV['DB_PASSWORD']
-        );*/
-        return new PDO(
-            'mysql:host=localhost;dbname=xerophy',
-            'root',
-            ''
         );
     }
 

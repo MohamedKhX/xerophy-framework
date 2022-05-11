@@ -99,13 +99,13 @@ class Application extends Container
     {
         session_start();
 
-        $this->loadEnv();
-
         $this->basePath = $basePath;
         $this->paths = $paths;
 
+        $this->loadEnv();
+
         $this->request = $this->getObject(Request::class);
-        $this->router = $this->getObject(Router::class);
+        $this->router  = $this->getObject(Router::class);
         $this->session = $this->getObject(Session::class);
 
         $this->setAppName($_ENV['APP_NAME']);
