@@ -122,7 +122,7 @@ class Application extends Container
     /**
      * Get the database instance.
      * */
-    public static function DB()
+    public static function DB(): Database
     {
         return static::$database;
     }
