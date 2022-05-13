@@ -7,4 +7,7 @@ The lightweight framework for php developers
 
 
 ### Xerophy documentation 
- [Documentation](https://xerophy.com/documentation).
+ [Documentation](https://mohamedkhx.github.io/Xerophy-docs/#/).
+ 
+### Xerophy Website
+ [webiste](https://mohamedkhx.github.io/xerophy-website-design/).
