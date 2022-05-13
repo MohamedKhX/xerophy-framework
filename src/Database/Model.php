@@ -94,7 +94,7 @@ abstract class Model
             $toFill[$item] = $this->$item;
         }
 
-        if($this->id) {
+        if(isset($this->id)) {
             static::update($this->id ,$toFill);
         } else {
             static::create($toFill);
